@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="mandel.js"></script>
+    <title>MandelZoom</title>
+    <style type="text/css">
+      <!--
+          @import "styles/gen_styles.css";
+      -->
+    </style>
+  </head>
+  <body onload="mandel.setup()" bgcolor="#ffffff">
+    <table cellspacing="0" cellpadding="0">
+      <tr>
+        <td class="title" valign="top">Mandelbrot Zoom</td>
+        <td>
+          <input type="text" id="version" disabled="disabled" 
+                 style="text-align: right" size="6"></input>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div style="width: 420px;height: 420px;overflow: auto">
+            <canvas id="mandelCanvas" width="400" height="400"
+                    style="border:1px solid #000000;" >
+            </canvas>
+          </div>
+        </td>
+        <td valign="top">
+          <table cellspacing="0" cellpadding="0">
+            <tr>
+              <td class="controls" align="center">
+                <input type="button" value="Display" 
+                       onclick="mandel.display()"/>
+              </td>
+              <td class="controls" align="center">
+                <input type="button" value="Zoom" 
+                       onclick="mandel.zoom()"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="controls" align="center">
+                <input type="button" value="Back" onclick="mandel.back()"/>
+              </td>
+              <td class="controls">
+              </td>
+              <td/>
+            </tr>
+            <tr>
+              <td class="params">Real Origin:</td>
+              <td class="params">
+                <input type="text" id="realorigin" class="numeric"
+                       size="6" maxlength="10" 
+                       onchange="mandel.set_param(this.id)"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="params">Imaginary Origin:</td>
+              <td class="params">
+                <input type="text" id="imaginaryorigin" class="numeric" 
+                       size="6" maxlength="10" 
+                       onchange="mandel.set_param(this.id)"/>
+              </td>
+            </tr>
+            <tr>
+              <td class="params">Size:</td>
+              <td class="params">
+                <input type="text" id="size" class="numeric"
+                       size="6" maxlength="10" 
+                       onchange="mandel.set_param(this.id)"/>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2">
+                <p> Some helpful text (probably)</p>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+    <p>
+      This is where the description will go.
+    </p>
+  </body>
+</html>
