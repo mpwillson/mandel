@@ -1,4 +1,4 @@
-(defproject mandeel "0.1.0-SNAPSHOT"
+(defproject mandel "0.1.0-SNAPSHOT"
   :description "Clojurescript Mandelbrot generator."
   :url "http://github.com/mpwillson/mandel"
   :license {:name "Eclipse Public License"

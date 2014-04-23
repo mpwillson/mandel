@@ -31,7 +31,7 @@
             <tr>
               <td class="controls" align="center">
                 <input type="button" value="Display" 
-                       onclick="mandel.display()"/>
+                       onclick="mandel.display_params()"/>
               </td>
               <td class="controls" align="center">
                 <input type="button" value="Zoom" 
@@ -42,32 +42,28 @@
               <td class="controls" align="center">
                 <input type="button" value="Back" onclick="mandel.back()"/>
               </td>
-              <td class="controls">
+              <td class="controls" align="center">
               </td>
-              <td/>
             </tr>
             <tr>
               <td class="params">Real Origin:</td>
               <td class="params">
                 <input type="text" id="realorigin" class="numeric"
-                       size="6" maxlength="10" 
-                       onchange="mandel.set_param(this.id)"/>
+                       size="6" maxlength="10" />
               </td>
             </tr>
             <tr>
               <td class="params">Imaginary Origin:</td>
               <td class="params">
                 <input type="text" id="imaginaryorigin" class="numeric" 
-                       size="6" maxlength="10" 
-                       onchange="mandel.set_param(this.id)"/>
+                       size="6" maxlength="10" />
               </td>
             </tr>
             <tr>
-              <td class="params">Size:</td>
+              <td class="params">Side:</td>
               <td class="params">
-                <input type="text" id="size" class="numeric"
-                       size="6" maxlength="10" 
-                       onchange="mandel.set_param(this.id)"/>
+                <input type="text" id="side" class="numeric"
+                       size="6" maxlength="10" />
               </td>
             </tr>
             <tr>

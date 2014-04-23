@@ -1,12 +1,13 @@
 (ns mandelset)
 
-(defn compute-set [acorner bcorner side pixel-side]
-  (let [gap (/ side pixel-side)]
-    (for [b (range (dec pixel-side) -1 -1)]
-      (let [bc (+ bcorner (* b gap))]
-        (for [a (range pixel-side)]
-            (let [ac (+ acorner (* a gap))]
-                (loop [count 0 az 0 bz 0 limit 1000]
+(defn compute-set [{:keys [realorigin imaginaryorigin side]}  pixel-side]
+  (let [gap (/ side pixel-side)
+        max-iterations 1000]
+    (vec (for [a (range pixel-side)]
+      (let [ac (+ realorigin (* a gap))]
+        (vec (for [b (range pixel-side)]
+            (let [bc (+ imaginaryorigin (* b gap))]
+                (loop [count 0 az 0 bz 0 limit max-iterations]
                   (let [at (+ ac (- (* az az) (* bz bz)))
                         bz (+ bc (* 2 bz az))
                         az at
@@ -14,5 +15,5 @@
                         size (js/Math.sqrt (+ (* bz bz) (* az az)))
                         ]
                     (if (or (> size 2) (zero? limit))
-                      count
-                      (recur (inc count) az bz (dec limit)))))))))))
+                      (if (= count max-iterations) 0 count)
+                      (recur (inc count) az bz (dec limit)))))))))))))
