@@ -9,6 +9,8 @@
                  [org.clojure/tools.nrepl "0.2.3"]]
   :source-paths ["src/clj"]
   :cljsbuild {:builds [{:source-paths ["src/cljs"]
-                        :compiler {:output-to "resources/public/mandel.js"
+                        :compiler {:output-dir "resources/public"
+                                   :output-to "resources/public/mandel.js"
                                    :optimizations :whitespace
+                                   :source-map "resources/public/mandel.js.map"
                                    :pretty-print true}}]})

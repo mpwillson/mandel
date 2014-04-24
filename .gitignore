@@ -11,3 +11,6 @@ pom.xml.asc
 .lein-plugins
 .lein-repl-history
 .nrepl-port
+/resources/public
+!/resources/public/mandel.js
+!/resources/public/mande.html

@@ -1,4 +1,4 @@
-(ns gui
+(ns mandel.gui
   (:require [cljs.reader :as reader]
             [goog.dom :as dom]
             [goog.events :as events]
@@ -39,14 +39,20 @@
 (defn new-origin [[x y] [nx ny]]
   [(min x nx) (min y ny)])
 
-(defn zwidth [[x y] [nx ny]]
+(defn zoom-width [[x y] [nx ny]]
   (js/Math.abs (- x nx)))
 
-(defn zheight [[x y] [nx ny]]
+(defn zoom-height [[x y] [nx ny]]
   (js/Math.abs (- y ny)))
 
 (defn canvas-size [canvas]
   (.-width (-> canvas get-element)))
+
+(defn get-zoom []
+  (let [zoom-params @zoom]
+    (if (seq zoom-params)
+      zoom-params
+      nil)))
 
 ;; works for Chrome - needs testing for other browsers.
 (defn event-coords 
@@ -62,16 +68,15 @@
         coord (event-coords e)
         origin (:origin @zoom)
         norigin (new-origin origin coord)
-        width (zwidth origin coord)
-        height (zheight origin coord)
+        width (zoom-width origin coord)
+        height (zoom-height origin coord)
         side (max width height)
         [x y] norigin
         ctx (get-context w)]
     (swap! zoom assoc :width side :height side)
-    (.clearRect ctx 0 0 (.-width w) (.-height w))
     (.putImageData ctx @image 0 0)
-    ;; use createLinearGradient for rubber-band line style?
-    (.strokeRect ctx x y side side)))
+    (set! (.-fillStyle ctx) "rgba(200,200,200,0.5)")
+    (.fillRect ctx x y side side)))
 
 (defn mouse-down [e]
   (let [coord (event-coords e)
@@ -80,7 +85,8 @@
     ;; on mouse down, set drag handler and save coords as origin of 
     ;; rubber-band box
     (swap! zoom assoc :origin coord)
-    (reset! image (.getImageData ctx 0 0 (.-width w) (.-height w)))
+    (when-not @image 
+      (reset! image (.getImageData ctx 0 0 (.-width w) (.-height w))))
     (events/listen w (.-MOUSEMOVE events/EventType) mouse-drag)))    
 
 (defn mouse-up [e]
@@ -102,9 +108,9 @@
   [value]
   (if (zero? value) 
     "#000000"
-    (let [r (mod (* value 137) 255)
-          g (/ r 2)
-          b (mod (* r 3) 255)]
+    (let [r (mod (* value 33) 255)
+          g (/ r 5)
+          b 200 ] ;(mod (* r 11) 255)]
       (format "rgb(%d,%d,%d)" r g b))))
 
 (defn draw-symbol [ctx x y size color]
@@ -114,6 +120,7 @@
 (defn display-matrix [canvas matrix width height]
   (let [c (get-element canvas)
         ctx (get-context c)]
+    (reset! image nil)
     (doseq [x (range width) y (range height)]
       (let [value (get-in matrix [x y])]
         (draw-symbol ctx x y 1 value)))))
@@ -122,5 +129,4 @@
   (let [c (get-element canvas)
         ctx (get-context c)]
     (reset! image i)
-    (.clearRect ctx 0 0 (.-width c) (.-height c))
     (.putImageData ctx i 0 0)))
