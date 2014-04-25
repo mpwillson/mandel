@@ -1,4 +1,4 @@
-;;;; Mandelzoom - as described by A, K, Dewdney.
+;;;; Mandelzoom - as described by A. K. Dewdney.
 
 (ns mandel.core
   (:require [cljs.reader :as reader]
