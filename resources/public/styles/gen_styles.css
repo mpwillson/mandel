@@ -3,6 +3,9 @@ pre {font-family: monospace; font-size: 9pt;  background-color: #e0e0e0}
 h1 {color: #999e6a; background-color: white; font-size: 14pt}
 h2 {font-size: 12pt; font-weight: bold}
 h3 {font-size: 12pt; font-style: italic}
+
+/* Standard navigation bar setup */
+
 .navbar a {
     text-decoration: none; 
     font-family: sans-serif;
@@ -15,6 +18,27 @@ h3 {font-size: 12pt; font-style: italic}
     background: white;
 }
 
+/* Styles required by goog.ui.ProgressBar */
+
+.progress-bar-horizontal {
+    position: relative;
+    padding: 1px;
+    margin: 2px;
+    border: 1px solid #949dad;
+    width: 95%;
+    background: white;
+    overflow: hidden;
+    height: 10px;
+}
+
+.progress-bar-thumb {
+    background: #4C93A3;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+
+/* Colourful tables */
 
 th.title {color: #979e6a; font-size: 14pt; font-weight: bold; text-align: left}
 th.controls {background-color: #4C93A3; color: white; font-weight: bold;}

@@ -12,7 +12,7 @@
   <body onload="mandel.core.setup()" bgcolor="#ffffff">
     <table cellspacing="0" cellpadding="0">
       <tr>
-        <td class="title" valign="top">Mandelbrot Zoom</td>
+        <td class="title" valign="top">MandelZoom</td>
         <td>
           <input type="text" id="version" disabled="disabled" 
                  style="text-align: right" size="6"></input>
@@ -73,7 +73,21 @@
             </tr>
             <tr>
               <td colspan="2">
-                <p> Some helpful text (probably)</p>
+                <p id="message">At your service ...</p>
+                  <div id="pb"></div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="2" width="250">
+                <p>
+                  Hit Display to show the Mandelbrot set, using the values
+                  in the parameter fields.  The defaults show a good overview.
+                </p>
+                <p>
+                  You can click and drag a zoom box in the display
+                  area.  Hit Zoom to display the selected area.  Back
+                  will return you to the previous view.
+                </p>
               </td>
             </tr>
           </table>
@@ -81,7 +95,12 @@
       </tr>
     </table>
     <p>
-      This is where the description will go.
+      MandelZoom is based on an article by A. K. Dewdney in "The
+      Armchair Universe".
+    </p>
+    <p>
+      Source code is available on <a
+      href="http://github.com/mpwillson/mandel">Github</a>.
     </p>
   </body>
 </html>

@@ -1,6 +1,10 @@
+;;;; Mandelzoom - as described by A, K, Dewdney.
+
 (ns mandel.core
   (:require [cljs.reader :as reader]
-            [mandel.gui :as gui] [mandel.set :as set]))
+            [goog.Timer :as timer]
+            [mandel.gui :as gui] 
+            [mandel.set :as set]))
 
 (def version "0.1")
 
@@ -16,10 +20,15 @@
       (swap! stack rest)
       elt)))
 
-(defn set-params [params]
+(defn set-params 
+  "Set values from map param atom in gui elements where element ids match keys."
+  [params]
   (doseq [p (keys @params)] (gui/set-value p (p @params))))
 
-(defn get-params [params]
+(defn get-params 
+  "Return and update values in param map atom from gui elements where 
+  element ids match keys."
+  [params]
   (let [param-keys (keys @params)
         values (flatten (for [k param-keys] (list k (gui/get-value k))))]
     (swap! params (partial apply assoc) values)))
@@ -34,16 +43,49 @@
         new-side (* (/ width image-width) side)]
     {:realorigin new-ro :imaginaryorigin new-io :side new-side}))
 
-(defn progress [count]
-  (js/console.log count))
+(def current-col "Holds Mandelbrot set column to be computed."
+  (atom 0))
 
-(defn display [iplane]
+(defn display-progress 
+  "Compute and display Mandelbrot set on a column by column basis, 
+  using values in global Vars.  Displays progress via gui/pb-update.
+  Use of global state and timers required due to single-threading model."
+  []
+  (let [image-width (gui/canvas-size :mandelCanvas)]
+    (set/compute-column-for-matrix @current-col @iplane image-width)
+    (let [next-count (swap! current-col inc)]
+      (if (= next-count image-width)
+        (do
+          (gui/set-text :message "Processing ... done")
+          (gui/display-matrix :mandelCanvas @set/matrix 
+                              image-width image-width))
+        (do
+          (gui/pb-update next-count)
+          (timer/callOnce display-progress 5))))))
+
+(defn display 
+  "Compute and display Mandebrot set using values from iplane."
+  [iplane]
   (let [image-width (gui/canvas-size :mandelCanvas)
-        ms (set/compute-set iplane image-width nil)]
+        ms (set/compute iplane image-width)]
     (gui/display-matrix :mandelCanvas ms image-width image-width)))
 
-(defn ^:export display-params []
-  (display (get-params iplane)))
+(defn display-progress-setup 
+  "Initialise state (yuck) for calculation and display of Mandelbrot set with
+  progress bar."
+  []
+  (gui/set-text :message "Processing ...")
+  (reset! current-col 0)
+  (gui/pb-update 0)
+  (set/init)
+  (display-progress))
+  
+(defn ^:export display-params 
+  "Callback to calculate and display the Mandelbrot set with the parameters
+  defined by the user."
+  []
+  (get-params iplane)
+  (display-progress-setup))
 
 (defn ^:export zoom 
   "Recompute and display Mandelbrot set image based on zoom
@@ -55,17 +97,19 @@
       (doseq [p (keys new-iplane)] (gui/set-value p (p new-iplane)))
       (push {:iplane @iplane, :image @gui/image})
       (reset! iplane new-iplane)
-      (display new-iplane))))
+      (display-progress-setup))))
 
 (defn ^:export back 
   "Restore previous Mandelbrot image, undoing zoom."
   []
   (when-let [previous (vpop)]
-      (reset! iplane (:iplane previous))
-      (set-params iplane)
-      (gui/display-image :mandelCanvas (:image previous))))
+    (gui/clear-zoom)
+    (reset! iplane (:iplane previous))
+    (set-params iplane)
+    (gui/display-image :mandelCanvas (:image previous))))
 
 (defn ^:export setup []
   (gui/set-value :version (str "v" version))
   (set-params iplane)
+  (gui/pb-init (gui/canvas-size :mandelCanvas))
   (gui/set-canvas-events :mandelCanvas))

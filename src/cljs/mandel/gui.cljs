@@ -1,13 +1,19 @@
+;;;; Handle gui interaction for MandelZoom
+
 (ns mandel.gui
   (:require [cljs.reader :as reader]
             [goog.dom :as dom]
             [goog.events :as events]
+            [goog.ui.ProgressBar]
+            [goog.ui.ProgressBar.Orientation]
             [goog.string :as gstring] ; both this and next line required for
             [goog.string.format]))    ; goog.string.format
 
+(def zoom "Holds zoom box coordinates." 
+  (atom {}))
 
-(def zoom (atom {}))
-(def image (atom nil))
+(def image "Mandelbrot display image prior to zoom."
+  (atom nil))
 
 (defn format 
   "Emulate clojure format via goog.string.format."
@@ -54,8 +60,26 @@
       zoom-params
       nil)))
 
+(defn clear-zoom []
+  (reset! zoom {}))
+
+(defn set-text [id txt]
+  (dom/setTextContent (get-element id) txt))
+
+;; Progress bar handling; note that CSS styles are required to support
+;; the rendering of goog.ui.ProgressBar.  Assume div with name of "pb" exists.
+(let [pb (goog.ui.ProgressBar.)]
+  (defn pb-init [max-count]
+    (doto pb
+      (.setMaximum max-count)
+      (.setOrientation goog.ui.ProgressBar.Orientation/HORIZONTAL)
+      (.render (get-element :pb))))
+  (defn pb-update [count]
+    (.setValue pb count)))
+
 ;; works for Chrome - needs testing for other browsers.
 (defn event-coords 
+  "Return [x y] of event location."
   [event]
   (let [x (.-offsetX event)
         y (.-offsetY event)]
@@ -92,7 +116,7 @@
 (defn mouse-up [e]
   (let [w (.-target e)
         coord (event-coords e)]
-    ;; on mouse-up; set no-drag handler and store dragged box coords
+    ;; on mouse-up; store dragged box coords and unset drag handler
     (swap! zoom assoc :origin (new-origin (:origin @zoom) coord))
     (events/removeAll w (.-MOUSEMOVE events/EventType))))
 
@@ -117,7 +141,9 @@
   (set! (.-fillStyle ctx) (map-color color))
   (.fillRect ctx x y size size))
 
-(defn display-matrix [canvas matrix width height]
+(defn display-matrix 
+  "Display matrix on canvas.  Image state is no longer valid."
+  [canvas matrix width height]
   (let [c (get-element canvas)
         ctx (get-context c)]
     (reset! image nil)
@@ -125,7 +151,9 @@
       (let [value (get-in matrix [x y])]
         (draw-symbol ctx x y 1 value)))))
 
-(defn display-image [canvas i]
+(defn display-image 
+  "Display image i to canvas.  Set image var."
+  [canvas i]
   (let [c (get-element canvas)
         ctx (get-context c)]
     (reset! image i)

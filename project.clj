@@ -11,6 +11,6 @@
   :cljsbuild {:builds [{:source-paths ["src/cljs"]
                         :compiler {:output-dir "resources/public"
                                    :output-to "resources/public/mandel.js"
-                                   :optimizations :whitespace
+                                   :optimizations :advanced
                                    :source-map "resources/public/mandel.js.map"
                                    :pretty-print true}}]})
