@@ -53,14 +53,14 @@
   []
   (let [image-width (gui/canvas-size :mandelCanvas)]
     (set/compute-column-for-matrix @current-col @iplane image-width)
-    (let [next-count (swap! current-col inc)]
-      (if (= next-count image-width)
+    (let [next-col (swap! current-col inc)]
+      (if (= next-col image-width)
         (do
           (gui/set-text :message "Processing ... done")
           (gui/display-matrix :mandelCanvas @set/matrix 
                               image-width image-width))
         (do
-          (gui/pb-update next-count)
+          (gui/pb-update next-col)
           (timer/callOnce display-progress 5))))))
 
 (defn display 
