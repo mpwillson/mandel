@@ -13,10 +13,12 @@
       (vec (for [b (range pixel-side)]
              (let [bc (+ imaginaryorigin (* b gap))]
                (loop [count 0 az 0 bz 0 limit max-iterations]
-                 (let [at (+ ac (- (* az az) (* bz bz)))
+                 (let [az2 (* az az)
+                       bz2 (* bz bz)
+                       at (+ ac (- az2 bz2))
                        bz (+ bc (* 2 bz az))
                        az at
-                       size (js/Math.sqrt (+ (* bz bz) (* az az)))
+                       size (js/Math.sqrt (+ bz2 az2))
                        ]
                    (if (or (> size 2) (zero? limit))
                      (if (= count max-iterations) 0 count)
