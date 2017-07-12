@@ -46,7 +46,8 @@
 (defn display-progress 
   "Compute and display Mandelbrot set on a column by column basis,
   Displays progress via gui/pb-update.  Use of timers required due to
-  single-threading model."  [column]
+  single-threading model."
+  [column]
   (let [image-width (gui/canvas-size :mandelCanvas)]
     (set/compute-column-for-matrix column @iplane image-width)
     (if (= column image-width)
