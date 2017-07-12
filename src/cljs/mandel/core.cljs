@@ -43,25 +43,20 @@
         new-side (* (/ width image-width) side)]
     {:realorigin new-ro :imaginaryorigin new-io :side new-side}))
 
-(def current-col "Holds Mandelbrot set column to be computed."
-  (atom 0))
-
 (defn display-progress 
-  "Compute and display Mandelbrot set on a column by column basis, 
-  using values in global Vars.  Displays progress via gui/pb-update.
-  Use of global state and timers required due to single-threading model."
-  []
+  "Compute and display Mandelbrot set on a column by column basis,
+  Displays progress via gui/pb-update.  Use of timers required due to
+  single-threading model."  [column]
   (let [image-width (gui/canvas-size :mandelCanvas)]
-    (set/compute-column-for-matrix @current-col @iplane image-width)
-    (let [next-count (swap! current-col inc)]
-      (if (= next-count image-width)
-        (do
-          (gui/set-text :message "Processing ... done")
-          (gui/display-matrix :mandelCanvas @set/matrix 
-                              image-width image-width))
-        (do
-          (gui/pb-update next-count)
-          (timer/callOnce display-progress 5))))))
+    (set/compute-column-for-matrix column @iplane image-width)
+    (if (= column image-width)
+      (do
+        (gui/set-text :message "Processing ... done")
+        (gui/display-matrix :mandelCanvas @set/matrix 
+                            image-width image-width))
+      (do
+        (gui/pb-update column)
+        (timer/callOnce #(display-progress (inc column)) 5)))))
 
 (defn display 
   "Compute and display Mandebrot set using values from iplane."
@@ -71,14 +66,13 @@
     (gui/display-matrix :mandelCanvas ms image-width image-width)))
 
 (defn display-progress-setup 
-  "Initialise state (yuck) for calculation and display of Mandelbrot set with
+  "Initialise calculation and display of Mandelbrot set with
   progress bar."
   []
-  (gui/set-text :message "Processing ...")
-  (reset! current-col 0)
-  (gui/pb-update 0)
   (set/init)
-  (display-progress))
+  (gui/set-text :message "Processing ...")
+  (gui/pb-update 0)
+  (display-progress 0))
   
 (defn ^:export display-params 
   "Callback to calculate and display the Mandelbrot set with the parameters
