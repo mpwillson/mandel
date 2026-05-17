@@ -6,7 +6,7 @@ description of such a program by A. K. Dewdney in "The Armchair Universe."
 ## Installation
 
 Download from [Github]( http://github.com/mpwillson/mandel).  You'll need
-everthing under the resources directory, which you should copy to an
+everything under the resources directory, which you should copy to an
 appropriate location (or web server) and change as required by the
 environment.
 
